@@ -14,7 +14,7 @@ dropLast(X, [X | T], T).
 % dropAll: drop all occurrences, returning a single list as result
 dropAll(X, [], []).
 dropAll(X, [X | T], R) :- dropAll(X, T, R), !.
-dropAll(X, [H | Xs], [H | L]) :- dropAll(X, Xs, L), !.
+dropAll(X, [H | Xs], [H | L]) :- dropAll(X, Xs, L).
 
 % ======= 2 =======
 % 2.1
