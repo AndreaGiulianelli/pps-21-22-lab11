@@ -93,14 +93,11 @@ allreaching(G, N, L) :- findall(Y, anypath(G, N, Y, L2), L).
 % N -> number of nodes
 % K -> maximum number of hops
 % P -> Path
-interval(A, B, A).
-interval(A, B, X) :- A2 is A + 1, A2 < B, interval(A2, B, X).
-
-couple(N, X, Y) :- interval(0, N, X), interval(0, N, Y).
+couple(N, X, Y) :- between(1, N, X), between(1, N, Y).
 
 grid(N, K, P) :- 
 	findall(e(X, Y), couple(N, X, Y), G), % Generating the whole graph 
-	interval(0, N, X1), % Iterate on all the couples
-	interval(0, N, Y1),
+	between(1, N, X1), % Iterate on all the couples
+	between(1, N, Y1),
 	anypath(G, X1, Y1, P, K). % Find the path from X1 to Y1
 	
