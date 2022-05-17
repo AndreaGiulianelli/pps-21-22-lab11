@@ -61,3 +61,9 @@ dropNode(G, N, OG) :- safeDropAll(e(N, _), G, G2), safeDropAll(e(_, N), G2, OG).
 reaching(G, N, L) :- findall(Y, member(e(N, Y), G), L).
 
 % 2.6
+% anypath(+Graph, +Node1, +Node2, -ListPath)
+% a path from Node1 to Node2
+% if there are many path , they are showed 1-by-1
+anypath([e(N1, N2) | _], N1, N2, [e(N1, N2)]) :- !.
+anypath([e(N1, N3) | T], N1, N2, [e(N1, N3) | L]) :- anypath(T, N3, N2, L).
+anypath([H | T], N1, N2, L) :- anypath(T, N1, N2, L).
