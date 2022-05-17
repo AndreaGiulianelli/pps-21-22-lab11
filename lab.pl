@@ -67,3 +67,9 @@ reaching(G, N, L) :- findall(Y, member(e(N, Y), G), L).
 anypath([e(N1, N2) | _], N1, N2, [e(N1, N2)]) :- !.
 anypath([e(N1, N3) | T], N1, N2, [e(N1, N3) | L]) :- anypath(T, N3, N2, L).
 anypath([H | T], N1, N2, L) :- anypath(T, N1, N2, L).
+
+% 2.7
+% allreaching(+Graph, +Node, -List)
+% all the nodes that can be reached from Node
+% Suppose the graph is NOT circular!
+% Use findall and anyPath!
