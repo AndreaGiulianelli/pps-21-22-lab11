@@ -63,10 +63,20 @@ reaching(G, N, L) :- findall(Y, member(e(N, Y), G), L).
 % anypath(+Graph, +Node1, +Node2, -ListPath)
 % a path from Node1 to Node2
 % if there are many path , they are showed 1-by-1
-% TODO: If use cut, 2.7 not work, because N2 has to work input/output.
-anypath([e(N1, N2) | _], N1, N2, [e(N1, N2)]).
-anypath([e(N1, N3) | T], N1, N2, [e(N1, N3) | L]) :- anypath(T, N3, N2, L).
-anypath([H | T], N1, N2, L) :- anypath(T, N1, N2, L).
+% -- First solution: woork poorly (some bugs) --
+% anypathWrong([e(1,2),e(1,3),e(2,3)],1,3,L) -> work
+% anypathWrong([e(0, 0), e(0,1), e(0, 2), e(1,0), e(1,1), e(1,2), e(2,0), e(2,1), e(2,2)], 1, 2, L) -> don't work
+% spurious no problem!
+anypathWrong([e(N1, N2) | _], N1, N2, [e(N1, N2)]).
+anypathWrong([e(N1, N3) | T], N1, N2, [e(N1, N3) | L]) :- anypathWrong(T, N3, N2, L).
+anypathWrong([H | T], N1, N2, L) :- anypathWrong(T, N1, N2, L).
+
+% -- Second solution: find all paths, limited to 3 hops --
+% anypath([e(1,2),e(1,3),e(2,3)],1,3,L) -> work
+% anypath([e(0, 0), e(0,1), e(0, 2), e(1,0), e(1,1), e(1,2), e(2,0), e(2,1), e(2,2)], 1, 2, L) -> work
+anypath(L, N1, N2, R) :- anypath(L, N1, N2, R, 3).
+anypath(L, N1, N2, [e(N1, N3) | R], K) :- K > 1, K2 is K - 1, member(e(N1, N3), L), anypath(L, N3, N2, R, K2).
+anypath(L, N1, N2, [e(N1, N2)], K) :- member(e(N1, N2), L), !.
 
 % 2.7
 % allreaching(+Graph, +Node, -List)
@@ -79,4 +89,18 @@ allreaching(G, N, L) :- findall(Y, anypath(G, N, Y, L2), L).
 % During last lesson we see how to generate a grid-like network. Adapt
 % that code to create a graph for the predicates implemented so far.
 % Try to generate all paths from a node to another, limiting the
-% maximum number of hops
+% grid(+N, +K, -P)
+% N -> number of nodes
+% K -> maximum number of hops
+% P -> Path
+interval(A, B, A).
+interval(A, B, X) :- A2 is A + 1, A2 < B, interval(A2, B, X).
+
+couple(N, X, Y) :- interval(0, N, X), interval(0, N, Y).
+
+grid(N, K, P) :- 
+	findall(e(X, Y), couple(N, X, Y), G), % Generating the whole graph 
+	interval(0, N, X1), % Iterate on all the couples
+	interval(0, N, Y1),
+	anypath(G, X1, Y1, P, K). % Find the path from X1 to Y1
+	
