@@ -31,12 +31,18 @@ fromCircList([H1, H2 | T], [e(H1, H2) | L], H) :- fromCircList([H2 | T], L, H).
 % 2.3
 % inDegree(+Graph, +Node, -Deg)
 % Deg is the number of edges leading into Node
-% TODO: non-tail
+% non-tail
+inDegree([], N, 0).
+inDegree([e(_, N) | T], N, D) :- inDegree(T, N, X), !, D is X + 1.
+inDegree([H | T], N, X) :- inDegree(T, N, X).
 
 % tail
-inDegree(L, X, N) :-  inDegree(L, X, N, 0).
-inDegree([], X, N, N).
-inDegree([e(_, X) | T], X, N, Nold) :- N2 is Nold + 1, inDegree(T, X, N, N2), !. % tail
-inDegree([e(_, Y) | T], X, N, Nold) :- inDegree(T, X, N, Nold).
+% X is the node, N is the degree
+inDegreeT(L, X, N) :-  inDegreeT(L, X, N, 0).
+inDegreeT([], X, N, N).
+inDegreeT([e(_, X) | T], X, N, Nold) :- N2 is Nold + 1, inDegreeT(T, X, N, N2), !. % tail
+inDegreeT([e(_, Y) | T], X, N, Nold) :- inDegreeT(T, X, N, Nold).
 
+
+% 2.4
 
