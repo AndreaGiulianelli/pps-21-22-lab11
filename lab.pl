@@ -45,4 +45,19 @@ inDegreeT([e(_, Y) | T], X, N, Nold) :- inDegreeT(T, X, N, Nold).
 
 
 % 2.4
+% dropNode(+Graph, +Node, -OutGraph)
+% drop all edges starting and leaving from a Node
+safeDropAll(X, [], []).
+safeDropAll(X, [Y | T], R) :- copy_term(X, Y), safeDropAll(X, T, R), !.
+safeDropAll(X, [H | Xs], [H | L]) :- safeDropAll(X, Xs, L).
 
+dropNode(G, N, OG) :- safeDropAll(e(N, _), G, G2), safeDropAll(e(_, N), G2, OG).
+
+% 2.5
+% reaching(+Graph, +Node, -List)
+% all the nodes that can be reached in 1 step from Node
+% possibly use findall, looking for e(Node, _) combined
+% with member(?Elem, ?List)
+reaching(G, N, L) :- findall(Y, member(e(N, Y), G), L).
+
+% 2.6
