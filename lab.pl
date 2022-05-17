@@ -43,7 +43,6 @@ inDegreeT([], X, N, N).
 inDegreeT([e(_, X) | T], X, N, Nold) :- N2 is Nold + 1, inDegreeT(T, X, N, N2), !. % tail
 inDegreeT([e(_, Y) | T], X, N, Nold) :- inDegreeT(T, X, N, Nold).
 
-
 % 2.4
 % dropNode(+Graph, +Node, -OutGraph)
 % drop all edges starting and leaving from a Node
@@ -64,7 +63,8 @@ reaching(G, N, L) :- findall(Y, member(e(N, Y), G), L).
 % anypath(+Graph, +Node1, +Node2, -ListPath)
 % a path from Node1 to Node2
 % if there are many path , they are showed 1-by-1
-anypath([e(N1, N2) | _], N1, N2, [e(N1, N2)]) :- !.
+% TODO: If use cut, 2.7 not work, because N2 has to work input/output.
+anypath([e(N1, N2) | _], N1, N2, [e(N1, N2)]).
 anypath([e(N1, N3) | T], N1, N2, [e(N1, N3) | L]) :- anypath(T, N3, N2, L).
 anypath([H | T], N1, N2, L) :- anypath(T, N1, N2, L).
 
@@ -73,3 +73,10 @@ anypath([H | T], N1, N2, L) :- anypath(T, N1, N2, L).
 % all the nodes that can be reached from Node
 % Suppose the graph is NOT circular!
 % Use findall and anyPath!
+allreaching(G, N, L) :- findall(Y, anypath(G, N, Y, L2), L).
+
+% 2.8
+% During last lesson we see how to generate a grid-like network. Adapt
+% that code to create a graph for the predicates implemented so far.
+% Try to generate all paths from a node to another, limiting the
+% maximum number of hops
