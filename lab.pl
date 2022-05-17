@@ -63,7 +63,7 @@ reaching(G, N, L) :- findall(Y, member(e(N, Y), G), L).
 % anypath(+Graph, +Node1, +Node2, -ListPath)
 % a path from Node1 to Node2
 % if there are many path , they are showed 1-by-1
-% -- First solution: woork poorly (some bugs) --
+% -- First solution: work poorly (some bugs) --
 % anypathWrong([e(1,2),e(1,3),e(2,3)],1,3,L) -> work
 % anypathWrong([e(0, 0), e(0,1), e(0, 2), e(1,0), e(1,1), e(1,2), e(2,0), e(2,1), e(2,2)], 1, 2, L) -> don't work
 % spurious no problem!
