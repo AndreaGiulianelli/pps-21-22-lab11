@@ -41,7 +41,7 @@ inDegree([H | T], N, X) :- inDegree(T, N, X).
 inDegreeT(L, X, N) :-  inDegreeT(L, X, N, 0).
 inDegreeT([], X, N, N).
 inDegreeT([e(_, X) | T], X, N, Nold) :- N2 is Nold + 1, inDegreeT(T, X, N, N2), !. % tail
-inDegreeT([e(_, Y) | T], X, N, Nold) :- inDegreeT(T, X, N, Nold).
+inDegreeT([H | T], X, N, Nold) :- inDegreeT(T, X, N, Nold).
 
 % 2.4
 % dropNode(+Graph, +Node, -OutGraph)
@@ -64,10 +64,14 @@ reaching(G, N, L) :- findall(Y, member(e(N, Y), G), L).
 % a path from Node1 to Node2
 % if there are many path , they are showed 1-by-1
 % acyclic graphs.
+% version 1
 anypath(G, N1, N2, L) :- anypath(G, N1, N2, G, L).
 anypath([e(N1, N2) | _], N1, N2, G, [e(N1, N2)]).
 anypath([e(N1, N3) | T], N1, N2, G, [e(N1, N3) | L]) :- anypath(G, N3, N2, G, L).
 anypath([H | T], N1, N2, G, L) :- anypath(T, N1, N2, G, L).
+% version 2
+anypathM(L, N1, N2,[e(N1, N3) | R]) :- member(e(N1, N3), L), anypathM(L, N3, N2, R).
+anypathM(L, N1, N2,[e(N1, N2)]) :- member(e(N1, N2), L), !.	
 
 % 2.7
 % allreaching(+Graph, +Node, -List)
@@ -98,4 +102,3 @@ gridgraph(N, M, G) :- findall(E, gridgraphgen(N, M, E), G).
 % anypath2([e(0, 0), e(0,1), e(0, 2), e(1,0), e(1,1), e(1,2), e(2,0), e(2,1), e(2,2)], 1, 2, K, L) -> work
 anypath2(L, N1, N2, K, [e(N1, N3) | R]) :- K > 1, K2 is K - 1, member(e(N1, N3), L), anypath2(L, N3, N2, K2, R).
 anypath2(L, N1, N2, K, [e(N1, N2)]) :- member(e(N1, N2), L), !.
-	
